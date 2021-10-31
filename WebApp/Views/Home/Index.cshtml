@@ -1,0 +1,92 @@
+﻿@inject ICategoryService categoryService;
+@inject IPostService postService;
+@inject IAuthorService authorService;
+@{ 
+    ViewBag.Title = "Ana Sayfa";
+
+    var months = new string[12] { "Ocak", "Şbt", "Mart", "Nisn", "May", "Haz", "Tem", "Ağu", "Eyl", "Ekim", "Kas", "Ara" };
+
+    var sliderPosts = (IDataResult<List<Post>>)postService.GetLatests(4);
+    var latestPosts = (IDataResult<List<Post>>)postService.SkipTake(4,30);
+}
+
+<div class="gn-slider shadow-sm mb-3">
+    <div class="gn-slider__wrapper" id="slide-one">
+        @{ 
+            var sliderPost = sliderPosts.Data.First();
+            var categoryIds = sliderPost.CategoryId.Split(',');
+        }
+        <img src="@sliderPost.Thumbnail"
+             class="gn-slider__wrapper--img" atl="space-x">
+        <div class="gn-slider__wrapper__content">
+            @foreach(var id in categoryIds){
+            <span class="tag tag-white">@{var categoryResult = (IDataResult<Category>)categoryService.GetById(int.Parse(id));}@categoryResult.Data.Name</span>
+            }
+            <h2 class="gn-slider__wrapper__content--title">
+                <a href="@sliderPost.Title.RemoveDiacritics().ToLower()/@sliderPost.Id" class="karga-slider-link" style="text-decoration:none;">@sliderPost.Title</a>
+            </h2>
+            <div class="gn-slider__wrapper__content__details">
+                <div class="gn-slider__wrapper__content__details--texts">
+                    <span>Yazar</span>
+                    <p>@{ var author = (IDataResult<Author>)authorService.GetById(sliderPost.AuthorId); }
+                        @author.Data.VisibleName
+                    </p>
+                </div>
+                <div class="gn-slider__wrapper__content__details--texts">
+                    <span>Tarih</span>
+                    <p>@months[sliderPost.AddedDate.Month-1], @sliderPost.AddedDate.Day</p>
+                </div>
+                <div class="gn-slider__wrapper__content__details--texts">
+                    <span>Saat</span>
+                    <p>@sliderPost.AddedDate.ToString("HH:mm")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="gn-slider__footer">
+        @for (var i = 1; i < 4; i++)
+        {
+            var currentPost = sliderPosts.Data.Skip(i).Take(1).ToArray()[0];
+            <div class="gn-slider__footer__item">
+                <img src="@currentPost.Thumbnail" width="50" style="height:50px;" height="50" alt="item">
+                <div class="gn-slider__footer__item__title">
+                    <h6><a href="@currentPost.Title.RemoveDiacritics().ToLower()/@currentPost.Id">@currentPost.Title</a></h6>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<div class="row">
+    @foreach (var post in latestPosts.Data)
+    {
+        <div class="col-lg-4 d-flex align-items-stretch px-0">
+            <figure class="snip1493">
+                <div class="image"><img src="@post.Thumbnail" alt="ls-sample1"></div>
+                <figcaption>
+                    <div class="date"><span class="day">@post.AddedDate.Day</span><span class="month">@months[post.AddedDate.Month-1]</span></div>
+                    <h3>@post.Title</h3>
+                    <p>
+
+                        @post.MetaDescription
+                    </p>
+                    <footer>
+                        <div class="views"><i class="ion-eye"></i>2,907</div>
+                        <div class="love"><i class="ion-heart"></i>@post.LikeCount</div>
+                        <div class="comments"><i class="ion-chatboxes"></i><span id="comments_count_@post.Id"></span></div>
+                    </footer>
+                </figcaption>
+                <a href="@post.Title.RemoveDiacritics().ToLower()/@post.Id"></a>
+            </figure>
+        </div>
+    }
+</div>
+<script>
+    window.onload = function () {
+        @foreach(var post in latestPosts.Data)
+        {
+            WriteLiteral($"DOMOperations.loadDisqusCommentStatus({post.Id});");
+        }
+    }
+</script>

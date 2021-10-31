@@ -1,0 +1,148 @@
+﻿@inject ICategoryService categoryService;
+@inject IPostService postService;
+@inject IAuthorService authorService;
+@{
+    var months = new string[12] { "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık" };
+    var post = (IDataResult<Post>)postService.GetById(ViewBag.PostId);
+    if (post.Data == null)
+    {
+        WriteLiteral("<div class='alert alert-danger'><i class='fa fa-exclamation-triangle me-2'></i>Bu sayfa bulunamadı. Yönlendiriliyorsunuz...</div><script>setTimeout(()=>{window.location.replace('/')},3000)</script>");
+        return;
+    }
+    ViewBag.Title = post.Data.Title;
+    var author = (IDataResult<Author>)authorService.GetById(post.Data.AuthorId);
+    var categoryIds = post.Data.CategoryId.Split(',');
+}
+
+<div class="karga-article-header">
+    <img src="@post.Data.Thumbnail"
+         class="karga-article-img" alt="" srcset="">
+    <div class="karga-category-badge-container">
+        @foreach (var id in categoryIds)
+        {
+            <span class="karga-category-badge badge">
+                @{
+                    var categoryResult = (IDataResult<Category>)categoryService.GetById(int.Parse(id));
+            }
+            @categoryResult.Data.Name
+        </span>
+    }
+    </div>
+    <div class="karga-article-title">
+        <h1>@post.Data.Title</h1>
+        <br class="d-lg-none" />
+        <div class="d-flex">
+            <a href="/@author.Data.Id" data-bs-toggle="tooltip" data-bs-placement="top" title="Yazarı Görüntüle"
+               class="author">
+                @author.Data.VisibleName
+            </a>
+            <span class="float-right date ms-auto">
+                <i class="fa fa-calendar"></i> @post.Data.AddedDate.Day @months[post.Data.AddedDate.Month - 1] <i class="fa fa-clock-o ms-2"></i> @post.Data.AddedDate.ToString("HH:mm")
+            </span>
+        </div>
+    </div>
+</div>
+<div class="karga-article-body karga-content entry-content">
+    @{ WriteLiteral(post.Data.Body); }
+    <div class="karga-section-like alert alert-info mt-5 mb-2">
+        <span class="mt-1">
+            <i class="fa fa-info me-2"></i> Bu yazıyı beğendiniz mi?
+        </span>
+        <span class="ms-auto">
+            <button class="btn btn-success btn-sm btn-like" onclick="like();"><i class="fa fa-thumbs-up"></i></button>
+            <button class="btn btn-danger btn-sm btn-dislike" onclick="dislike();"><i class="fa fa-thumbs-down"></i></button>
+        </span>
+    </div>
+
+    <div class="karga-section-liked alert alert-success mt-5 mb-2" style="display: none;">
+        <span class="mt-1">
+            <i class="fa fa-thumbs-up me-2"></i> Bu yazıyı beğendiniz.
+        </span>
+        <!-- <span class="ms-auto">
+            <button class="btn btn-success btn-sm btn-like" disabled onclick="like();">Evet</button>
+            <button class="btn btn-danger btn-sm btn-dislike" disabled onclick="dislike();">Hayır</button>
+        </span> -->
+    </div>
+
+    <div class="karga-section-disliked alert alert-danger mt-5 mb-2" style="display: none;">
+        <span class="mt-1">
+            <i class="fa fa-thumbs-down me-2"></i> Bu yazıyı beğenmediniz.
+        </span>
+        <!-- <span class="ms-auto">
+            <button class="btn btn-success btn-sm btn-like" disabled onclick="like();">Evet</button>
+            <button class="btn btn-danger btn-sm btn-dislike" disabled onclick="dislike();">Hayır</button>
+        </span> -->
+    </div>
+
+    <div id="disqus_thread"></div>
+    <script>
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+        var disqus_config = function () {
+            this.page.identifier = "@post.Data.Id"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        (function () { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://kargala.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>
+        Please enable JavaScript to view the comments.
+    </noscript>
+</div>
+
+<script>
+    var disabledBirdsForPage = true;
+</script>
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="adviceOne" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <img src="..." class="rounded me-2" alt="...">
+        <strong class="me-auto">Bootstrap</strong>
+        <small>11 mins ago</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        Hello, world! This is a toast message.
+      </div>
+    </div>
+  </div>
+
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="adviceTwo" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <img src="..." class="rounded me-2" alt="...">
+        <strong class="me-auto">Bootstrap</strong>
+        <small>11 mins ago</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        Hello, world! This is a toast message.
+      </div>
+    </div>
+  </div>
+
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="adviceThree" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <img src="..." class="rounded me-2" alt="...">
+        <strong class="me-auto">Bootstrap</strong>
+        <small>11 mins ago</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        Hello, world! This is a toast message.
+      </div>
+    </div>
+  </div>
+
+@section Scripts{
+    <script>
+        var currentPost = @post.Data.Id;
+    </script>
+    <script src="/assets/js/post.js"></script>
+}

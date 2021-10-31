@@ -1,0 +1,31 @@
+﻿"@ViewBag.Query" için arama sonuçları (Toplam @ViewBag.Data.Count adet sonuç bulundu.)
+@{ 
+    var months = new string[12] { "Ocak", "Şbt", "Mart", "Nisn", "May", "Haz", "Tem", "Ağu", "Eyl", "Ekim", "Kas", "Ara" };
+    ViewBag.Title = $"'{ViewBag.Query}' için arama sonuçları";
+}
+<div class="row">
+    <div class="row">
+        @foreach (var post in ViewBag.Data)
+        {
+            <div class="col-lg-4 d-flex align-items-stretch px-0">
+                <figure class="snip1493">
+                    <div class="image"><img src="@post.Thumbnail" alt="ls-sample1"></div>
+                    <figcaption>
+                        <div class="date"><span class="day">@post.AddedDate.Day</span><span class="month">@months[post.AddedDate.Month - 1]</span></div>
+                        <h3>@post.Title</h3>
+                        <p>
+
+                            @post.MetaDescription
+                        </p>
+                        <footer>
+                            <div class="views"><i class="ion-eye"></i>2,907</div>
+                            <div class="love"><i class="ion-heart"></i>623</div>
+                            <div class="comments"><i class="ion-chatboxes"></i><span id="comments_count_@post.Id"></span></div>
+                        </footer>
+                    </figcaption>
+                    <a href="/@StringExtensions.RemoveDiacritics(post.Title.ToLower())/@post.Id"></a>
+                </figure>
+            </div>
+        }
+    </div>
+</div>

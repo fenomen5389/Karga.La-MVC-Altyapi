@@ -1,0 +1,376 @@
+﻿@inject ICategoryService categoryService;
+@inject IChatMessageService chatMessageService;
+@inject IAuthorService authorService;
+@{
+    var categories = (IDataResult<List<Category>>)categoryService.GetAll();
+    var messages = (IDataResult<List<ChatMessage>>)chatMessageService.GetTodaysMessages();
+    var authors = (IDataResult<List<Author>>)authorService.GetAll();
+        }
+        <!-- Use permission granted for Uğur İŞÇEVİREN under karga.la,kargala.com -->
+        <!-- System is now running under @ViewBag.Title -->
+        <!DOCTYPE html>
+        <html lang="tr">
+
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>@ViewBag.Title - Karga.La</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+                integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+                crossorigin="anonymous">
+            <link rel="stylesheet" href="/assets/css/style.css">
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link
+                href="https://fonts.googleapis.com/css2?family=Montserrat&family=Noto+Sans&family=Oswald:wght@300&family=Roboto+Condensed&family=Source+Sans+Pro&display=swap"
+                rel="stylesheet">
+            <link rel="stylesheet" href="/assets/css/owl.carousel.min.css">
+            <link rel="stylesheet" href="/assets/css/owl.theme.default.min.css">
+            <link rel="stylesheet"
+                href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+            <link rel="stylesheet" href="/assets/css/chat.css">
+            <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+            <link rel="stylesheet" href="/assets/css/wp-addons.css">
+            <script>
+                disabledBirdsForPage = false;
+            </script>
+        </head>
+
+        <body>
+            <div class="karga-line karga-line-thin"></div>
+            <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
+                <div class="container-fluid" style="position: relative;">
+                    <a class="navbar-brand" href="/">
+                        <img src="/images/logo.png" class="karga-logo" alt="" height="50">
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="/">Ana Sayfa</a>
+                            </li>
+                            @{var parentCategories = categories.Data.Where(c => c.ParentCategoryId == null).ToList();}
+                            @foreach (Category category in parentCategories)
+                            {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle"
+                                    href="/category/@category.Name.RemoveDiacritics().ToLower().@category.Id"
+                                    id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @category.Name
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/category/@category.Name.RemoveDiacritics().ToLower().@category.Id"
+                                            class="dropdown-item">@category.Name</a></li>
+                                    @{ var subCategories = categories.Data.Where(c => c.ParentCategoryId ==
+                                    category.Id).ToList(); }
+                                    @foreach (Category subCategory in subCategories)
+                                    {
+                                    <li><a href="/category/@subCategory.Name.RemoveDiacritics().ToLower().@subCategory.Id"
+                                            class="dropdown-item">@subCategory.Name</a></li>
+                                    }
+                                </ul>
+                            </li>
+                            }
+                            <li class="nav-item d-lg-none" data-bs-target="#searchModal" data-bs-toggle="modal">
+                                <a class="nav-link"><i class="fa fa-search me-2"></i>Ara</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <a class="karga-search" onclick="DOMOperations.toggleSearch();" href="#">
+                        <i class="fa fa-search"></i>
+                    </a>
+                </div>
+            </nav>
+
+
+            <div class="container" style="overflow: hidden;">
+                <div class="row mt-3">
+                    <div class="col-lg-9">
+                        <div class="card karga-content karga-stories">
+
+                        </div>
+                    </div>
+                    <div class="col-lg-3 mt-2 mt-lg-0">
+                        <div class="card karga-content karga-fleets">
+                            <ul class="fleet-container">
+                                <li>
+                                    <div class="fleet-body">
+                                        <img src="https://secureservercdn.net/160.153.137.14/umj.b3a.myftpupload.com/wp-content/uploads/2021/08/20200101_145407-150x150.jpg"
+                                            class="fleet-author-img" alt="" srcset="">
+                                        <a href="#">Yazar Tweeti 1 Yazar Tweeti 1 Yazar Tweeti 1Yazar Tweeti 1Yazar
+                                            Tweeti 1</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="fleet-body">
+                                        <img src="https://secureservercdn.net/160.153.137.14/umj.b3a.myftpupload.com/wp-content/uploads/2021/08/20200101_145407-150x150.jpg"
+                                            class="fleet-author-img" alt="" srcset="">
+                                        <a href="#">Yazar Tweeti 2</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="fleet-body">
+                                        <img src="https://secureservercdn.net/160.153.137.14/umj.b3a.myftpupload.com/wp-content/uploads/2021/08/20200101_145407-150x150.jpg"
+                                            class="fleet-author-img" alt="" srcset="">
+                                        <a href="#">Yazar Tweeti 3</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="fleet-body">
+                                        <img src="https://secureservercdn.net/160.153.137.14/umj.b3a.myftpupload.com/wp-content/uploads/2021/08/20200101_145407-150x150.jpg"
+                                            class="fleet-author-img" alt="" srcset="">
+                                        <a href="#">Yazar Tweeti 4</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="fleet-body">
+                                        <img src="https://secureservercdn.net/160.153.137.14/umj.b3a.myftpupload.com/wp-content/uploads/2021/08/20200101_145407-150x150.jpg"
+                                            class="fleet-author-img" alt="" srcset="">
+                                        <a href="#">Yazar Tweeti 5</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-9">
+                        @RenderBody()
+                    </div>
+                    <div class="col-lg-3 mt-3 mt-lg-0">
+                        <div class="card karga-content">
+                            <div class="card-header content-title">Bizi Takip Edin</div>
+                            <div class="card-body p-0">
+                                <div class="row mx-0">
+                                    <a href="https://www.instagram.com/karga.la/" target="_blank"
+                                        class="col-lg-4 left-bottom-radius follow"><i class="fa fa-instagram"></i></a>
+                                    <a href="https://www.facebook.com/kkarga.la" target="_blank"
+                                        class="col-lg-4 follow"><i class="fa fa-facebook"></i></a>
+                                    <a href="https://twitter.com/karga_la" target="_blank"
+                                        class="col-lg-4 right-bottom-radius follow"><i class="fa fa-twitter"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card karga-content karga-clickable mt-3 chat-room-open"
+                            onclick="DOMOperations.openChatWindow();">
+                            <div class="card-header content-title">Sohbet Odası</div>
+                            <div class="card-body p-0">
+                                <div class="row mx-0">
+                                    <div class="col-lg-12 follow bottom-radius right-bottom-radius">
+                                        <i class="fa fa-comment"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card karga-content mt-3">
+                            <div class="card-header content-title">Popüler Yazılar</div>
+
+                        </div>
+                        <div class="card karga-content mt-3">
+                            <div class="card-header content-title">Haftanın Videosu</div>
+                            <iframe src="https://www.youtube.com/embed/Dw6OVD63hvg" title="YouTube video player"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="card karga-content mt-3">
+                            <div class="card-header content-title">Haftalık Trailer</div>
+                            <iframe src="https://www.youtube.com/embed/eHp3MbsCbMg" title="YouTube video player"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <div class="waves">
+                    <div class="wave" id="wave1"></div>
+                    <div class="wave" id="wave2"></div>
+                    <div class="wave" id="wave3"></div>
+                    <div class="wave" id="wave4"></div>
+                </div>
+                <ul class="social-icon">
+                    <li class="social-icon__item">
+                        <a class="social-icon__link" href="#">
+                            <ion-icon name="logo-facebook"></ion-icon>
+                        </a>
+                    </li>
+                    <li class="social-icon__item">
+                        <a class="social-icon__link" href="#">
+                            <ion-icon name="logo-twitter"></ion-icon>
+                        </a>
+                    </li>
+                    <li class="social-icon__item">
+                        <a class="social-icon__link" href="#">
+                            <ion-icon name="logo-linkedin"></ion-icon>
+                        </a>
+                    </li>
+                    <li class="social-icon__item">
+                        <a class="social-icon__link" href="#">
+                            <ion-icon name="logo-instagram"></ion-icon>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="menu">
+                    <li class="menu__item"><a class="menu__link" href="#">Ana Sayfa</a></li>
+                    <li class="menu__item"><a class="menu__link" href="#">Hakkımızda</a></li>
+                    <li class="menu__item"><a class="menu__link" href="#">Yazarlar</a></li>
+                    <li class="menu__item"><a class="menu__link" href="#">Hukuka Aykırılık Bildirimi</a></li>
+                    <li class="menu__item"><a class="menu__link" href="#">İletişim</a></li>
+
+                </ul>
+                <p>&copy; 2021 Karga.La / Kargala.com</p>
+            </footer>
+
+            <div class="backdrop"></div>
+            <div class="karga-notifications-popup">
+                <div class="text-center"><img src="./images/logo.png" class="karga-logo" height="60" alt="" srcset="">
+                </div>
+                <p class="mb-0 mt-3 alert alert-info text-center">
+                    Sizi en güncel yazılardan ve sohbetlerden haberdar etmemizi
+                    istiyorsanız lütfen bildirimlere izin verin.
+                </p>
+                <div class="text-center mt-3">
+                    <button class="btn btn-danger">Tamam</button>
+                    <button class="btn btn-outline">İstemiyorum</button>
+                </div>
+            </div>
+
+            <div class="modal fade" id="selectUsernameModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Kullanıcı Adı Seçin</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info"><i class="fa fa-info me-2"></i>Devam etmek için bir kullanıcı
+                                adı seçmelisiniz.</div>
+                            <input type="text" class="form-control w-100" id="username_input"
+                                placeholder="Kullanıcı adınızı giriniz...">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                            <button type="button" onclick="saveUsername(username_input.value);"
+                                class="btn btn-primary">Seç</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="karga-chat-overlay">
+                <div class="chat-box">
+                    <div class="chat-box-header" id="chat-box-header">
+                        Sohbet Odası
+                        <span class="chat-box-toggle"><i class="material-icons">close</i></span>
+                    </div>
+                    <div class="chat-box-body">
+                        <div class="chat-box-overlay">
+                        </div>
+                        <div class="chat-logs" id="logs-panel">
+                            @foreach (ChatMessage message in messages.Data)
+                            {
+                            <div class="chat-msg @{ if (message.Username == Context.Request.Cookies[" INet_UserName"]) {
+                                WriteLiteral("self"); } else { WriteLiteral("user"); } } ">
+                            <div class=" cm-msg-text">
+                                <span class="user-name">@{ if (message.Username ==
+                                    Context.Request.Cookies["INet_UserName"]) { WriteLiteral("Siz"); } else {
+                                    WriteLiteral(message.Username); } }</span>
+                                @message.Message
+                                <span class="time">
+                                    @message.DateTime.ToString("HH:mm")
+                                </span>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    <!--chat-log -->
+                </div>
+                <div class="chat-input">
+                    <form>
+                        <input type="text" id="chat-input" placeholder="Bir mesaj yaz..." />
+                        <button type="submit" class="chat-submit" id="chat-submit"><i
+                                class="material-icons">send</i></button>
+                    </form>
+                </div>
+            </div>
+            </div>
+
+            <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <form action="/search">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Kargala'da Ara</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="search" class="form-control" name="q"
+                                            placeholder="Aramak için buraya yazın..." />
+
+                                    </div>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-lg-6">
+                                        <h6>Yazar Seçimi</h6>
+                                        <select name="author" class="form-control">
+                                            <option value="">Hepsi</option>
+                                            @foreach(var author in authors.Data)
+            {
+                <option value="@author.Id">@author.VisibleName</option>
+            }
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-6 mt-3 mt-lg-0">
+                                        <h6>Tarih Seçimi</h6>
+                                        <input type="date" class="form-control" name="start" value="" />
+                                        <input type="date" class="form-control mt-2" name="end" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+                                        class="fa fa-times me-2"></i>Kapat</button>
+                                <button type="submit" class="btn btn-primary"><i
+                                        class="fa fa-search me-2"></i>Ara</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+                integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+                crossorigin="anonymous"></script>
+            <script src="/assets/js/owl.carousel.min.js"></script>
+            <script src="https://ajax.cdnjs.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
+            <script src="https://ajax.cdnjs.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.16.0/TweenMax.min.js"></script>
+            <script type='text/javascript'
+                src='https://secureservercdn.net/160.153.137.14/umj.b3a.myftpupload.com/wp-content/plugins/jetpack/modules/theme-tools/responsive-videos/responsive-videos.min.js?ver=1.3&#038;time=1635533662'
+                id='jetpack-responsive-videos-min-script-js'></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/aspnet-signalr/1.0.27/signalr.min.js"
+                integrity="sha512-a+73ErrZPjhqOu0qbW1QLsenEF4pvDjmnd+Ws6hkDyJlrwAigOQAxQhIT+fPNFWScUvtJQvn+G535TT2C6/G4g=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script src="/assets/js/bird.js"></script>
+            <script src="/assets/js/karga.js"></script>
+            <script src="/assets/js/chat.js"></script>
+            @RenderSection("Scripts",false)
+        </body>
+
+        </html>
